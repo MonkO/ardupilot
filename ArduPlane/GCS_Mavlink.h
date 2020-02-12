@@ -57,6 +57,8 @@ private:
     MAV_MODE base_mode() const override;
     MAV_STATE vehicle_system_status() const override;
 
+    MAV_VTOL_STATE vtol_state() const override;
+
     uint8_t radio_in_rssi() const;
 
     float vfr_hud_airspeed() const override;

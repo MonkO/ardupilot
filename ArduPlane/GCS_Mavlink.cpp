@@ -555,6 +555,7 @@ static const ap_message STREAM_RAW_SENSORS_msgs[] = {
 };
 static const ap_message STREAM_EXTENDED_STATUS_msgs[] = {
     MSG_SYS_STATUS,
+    MSG_EXTENDED_SYS_STATE,
     MSG_POWER_STATUS,
     MSG_MEMINFO,
     MSG_CURRENT_WAYPOINT,
@@ -1368,4 +1369,25 @@ uint64_t GCS_MAVLINK_Plane::capabilities() const
             (plane.terrain.enabled() ? MAV_PROTOCOL_CAPABILITY_TERRAIN : 0) |
 #endif
             GCS_MAVLINK::capabilities());
+}
+
+MAV_VTOL_STATE GCS_MAVLINK_Plane::vtol_state() const
+{
+    if(plane.quadplane.available()) {
+        if(plane.auto_state.vtol_mode) {
+            if(plane.quadplane.in_transition()) {
+                return MAV_VTOL_STATE_TRANSITION_TO_FW;
+            } else {
+                return MAV_VTOL_STATE_MC;
+            } 
+        } else {
+            if(plane.quadplane.in_transition()) {
+                return MAV_VTOL_STATE_TRANSITION_TO_MC;
+            } else {
+                return MAV_VTOL_STATE_FW;
+            }
+        } 
+    } else {
+        return MAV_VTOL_STATE_UNDEFINED;
+    }
 }
